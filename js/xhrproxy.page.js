@@ -1,4 +1,4 @@
-﻿//API Proxy Tool
+﻿//XHR Proxy Tool
 //author @huntbao
 (function () {
 
@@ -34,7 +34,7 @@
         },
 
         checkPluginHandler: function () {
-            document.body.dataset.apiproxytoolinstalled = true
+            document.body.dataset.xhrproxytoolinstalled = true
         },
 
         sendRequeseHandler: function (result) {
