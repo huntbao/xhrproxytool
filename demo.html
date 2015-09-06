@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <div class="xhr-proxy-toolbox">
+        <input name="xhrpt-send-url" value="http://127.0.0.1/api/datatype/getDetailListByProId" />
+        <select name="xhrpt-send-method">
+            <option value="POST">POST</option>
+            <option value="GET">GET</option>
+        </select>
+        <textarea name="xhrpt-send-data">{limit: 10000, id: "10434"}</textarea>
+        <button name="xhrpt-send-button">Click Me</button>
+    </div>
+    <script>
+        document.addEventListener('onxhrptresult', function (e) {
+            console.log(e.detail)
+        }, false);
+    </script>
+</body>
+</html>
