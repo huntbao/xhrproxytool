@@ -5,19 +5,47 @@
     <title></title>
 </head>
 <body>
-    <div class="xhr-proxy-toolbox">
-        <input name="xhrpt-send-url" value="http://127.0.0.1/api/datatype/getDetailListByProId" />
-        <select name="xhrpt-send-method">
-            <option value="POST">POST</option>
-            <option value="GET">GET</option>
-        </select>
-        <textarea name="xhrpt-send-data">{limit: 10000, id: "10434"}</textarea>
-        <button name="xhrpt-send-button">Click Me</button>
-    </div>
-    <script>
-        document.addEventListener('onxhrptresult', function (e) {
-            console.log(e.detail)
-        }, false);
-    </script>
+<div class="xhr-proxy-toolbox">
+    <input name="xhrpt-send-url" value="http://gc.ditu.aliyun.com/regeocoding"/>
+    <select name="xhrpt-send-method">
+        <option value="POST">POST</option>
+        <option value="GET">GET</option>
+    </select>
+    <textarea name="xhrpt-send-data">{l: "39.938133,116.395739", type: "001"}</textarea>
+    <button name="xhrpt-send-button" onclick="sendR()">Click Me</button>
+</div>
+<script>
+
+    var getValidJSON = function (value) {
+        var json
+        try {
+            json = JSON.parse(value)
+        } catch (e) {
+            try {
+                json = eval('(' + value + ')')
+            } catch (er) {
+            }
+        }
+        return json
+    }
+    function sendR() {
+        var box = document.querySelector('.xhr-proxy-toolbox')
+        var urlInput = box.querySelector('[name="xhrpt-send-url"]')
+        var methodInput = box.querySelector('[name="xhrpt-send-method"]')
+        var dataInput = box.querySelector('[name="xhrpt-send-data"]')
+        if (urlInput) {
+            var data = {
+                url: urlInput.value,
+                method: methodInput ? methodInput.value : 'get',
+                data: dataInput ? getValidJSON(dataInput.value) : ''
+            }
+            var event = new CustomEvent('send-toxhrpt-frompage', {detail: data})
+            document.dispatchEvent(event)
+        }
+    }
+    document.addEventListener('on-xhrptresult-fromext', function (e) {
+        console.log(e.detail)
+    }, false);
+</script>
 </body>
 </html>

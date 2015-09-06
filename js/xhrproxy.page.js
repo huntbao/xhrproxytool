@@ -4,11 +4,6 @@
 
     'use strict'
 
-    var $ = function (selector) {
-        if (typeof selector === 'object') return selector
-        return document.querySelector(selector)
-    }
-
     window.APP = {
 
         init: function () {
@@ -31,28 +26,14 @@
         },
 
         addEvent: function () {
-            var self = this
-            document.addEventListener('click', function (evt) {
-                var target = evt.target;
-                if (target.name === 'xhrpt-send-button') {
-                    var box = document.querySelector('.xhr-proxy-toolbox')
-                    var urlInput = box.querySelector('[name="xhrpt-send-url"]')
-                    var methodInput = box.querySelector('[name="xhrpt-send-method"]')
-                    var dataInput = box.querySelector('[name="xhrpt-send-data"]')
-                    if (urlInput) {
-                        chrome.extension.connect({
-                            name: 'send-request'
-                        }).postMessage({
-                            url: urlInput.value,
-                            method: methodInput ? methodInput.value : 'get',
-                            data: dataInput ? self.getValidJSON(dataInput.value) : ''
-                        })
-                    }
-                }
+            document.addEventListener('send-toxhrpt-frompage', function (evt) {
+                chrome.extension.connect({
+                    name: 'send-request'
+                }).postMessage(evt.detail)
             })
         },
 
-        checkPluginHandler: function (result) {
+        checkPluginHandler: function () {
             document.body.dataset.apiproxytoolinstalled = true
         },
 
@@ -63,21 +44,8 @@
             } catch (e) {
                 data = result.data
             }
-            var event = new CustomEvent('onxhrptresult', {detail: data})
+            var event = new CustomEvent('on-xhrptresult-fromext', {detail: data})
             document.dispatchEvent(event)
-        },
-
-        getValidJSON: function (value) {
-            var json
-            try {
-                json = JSON.parse(value)
-            } catch (e) {
-                try {
-                    json = eval('(' + value + ')')
-                } catch (er) {
-                }
-            }
-            return json
         }
     }
 
@@ -85,4 +53,5 @@
         window.APP.init()
     })
 
-})()
+})
+()
