@@ -4,7 +4,7 @@
 
     'use strict'
 
-    window.AP = {
+    window.XHRPT = {
 
         init: function () {
             var self = this
@@ -64,6 +64,6 @@
         }
     }
 
-    AP.init()
+    window.XHRPT.init()
 
 })()

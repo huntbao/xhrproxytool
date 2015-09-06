@@ -4,7 +4,7 @@
 
     'use strict'
 
-    window.APP = {
+    window.XHRPT = {
 
         init: function () {
             var self = this
@@ -50,7 +50,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        window.APP.init()
+        window.XHRPT.init()
     })
 
 })
