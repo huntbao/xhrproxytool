@@ -11,9 +11,6 @@
             chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
                 if (!sender || sender.id !== chrome.i18n.getMessage("@@extension_id")) return
                 switch (request.name) {
-                    case 'check-plugin-res':
-                        self.checkPluginHandler(request)
-                        break
                     case 'send-request-res':
                         self.sendRequeseHandler(request)
                         break
@@ -21,20 +18,18 @@
                         break
                 }
             })
-            chrome.extension.connect({name: 'check-plugin'}).postMessage()
             self.addEvent()
         },
 
         addEvent: function () {
-            document.addEventListener('send-toxhrpt-frompage', function (evt) {
+            document.addEventListener('check-xhrpt-ext', function (evt) {
+                document.dispatchEvent(new CustomEvent('check-xhrpt-ext-res'))
+            })
+            document.addEventListener('sendto-xhrpt-ext', function (evt) {
                 chrome.extension.connect({
                     name: 'send-request'
                 }).postMessage(evt.detail)
             })
-        },
-
-        checkPluginHandler: function () {
-            document.body.dataset.xhrproxytoolinstalled = true
         },
 
         sendRequeseHandler: function (result) {
@@ -44,7 +39,7 @@
             } catch (e) {
                 data = result.data
             }
-            var event = new CustomEvent('on-xhrptresult-fromext', {detail: data})
+            var event = new CustomEvent('sendto-xhrpt-ext-res', {detail: data})
             document.dispatchEvent(event)
         }
     }

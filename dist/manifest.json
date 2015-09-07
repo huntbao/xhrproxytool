@@ -20,6 +20,13 @@
       "run_at": "document_start"
     }
   ],
+  "icons": {
+    "128": "images/icons/128x128.png",
+    "16": "images/icons/16x16.png",
+    "19": "images/icons/19x19.png",
+    "32": "images/icons/32x32.png",
+    "48": "images/icons/48x48.png"
+  },
   "description": "XHR Proxy Tool",
   "manifest_version": 2,
   "name": "XHR Proxy Tool",

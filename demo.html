@@ -6,12 +6,12 @@
 </head>
 <body>
 <div class="xhr-proxy-toolbox">
-    <input name="xhrpt-send-url" value="http://gc.ditu.aliyun.com/regeocoding"/>
+    <input name="xhrpt-send-url" value="http://ip.taobao.com/service/getIpInfo.php"/>
     <select name="xhrpt-send-method">
-        <option value="POST">POST</option>
         <option value="GET">GET</option>
+        <option value="POST">POST</option>
     </select>
-    <textarea name="xhrpt-send-data">{l: "39.938133,116.395739", type: "001"}</textarea>
+    <textarea name="xhrpt-send-data">{ip: "63.223.108.42"}</textarea>
     <button name="xhrpt-send-button" onclick="sendR()">Click Me</button>
 </div>
 <script>
@@ -39,13 +39,23 @@
                 method: methodInput ? methodInput.value : 'get',
                 data: dataInput ? getValidJSON(dataInput.value) : ''
             }
-            var event = new CustomEvent('send-toxhrpt-frompage', {detail: data})
+            var event = new CustomEvent('sendto-xhrpt-ext', {detail: data})
             document.dispatchEvent(event)
         }
     }
-    document.addEventListener('on-xhrptresult-fromext', function (e) {
+    document.addEventListener('sendto-xhrpt-ext-res', function (e) {
         console.log(e.detail)
-    }, false);
+    }, false)
+
+    document.addEventListener('check-xhrpt-ext-res', function (e) {
+        console.log('XHR proxy tool is installed!')
+    }, false)
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // check extension installed?
+        document.dispatchEvent(new CustomEvent('check-xhrpt-ext'))
+    })
+
 </script>
 </body>
 </html>

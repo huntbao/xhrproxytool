@@ -15,24 +15,12 @@
             var self = this
             chrome.extension.onConnect.addListener(function (port) {
                 switch (port.name) {
-                    case 'check-plugin':
-                        self.checkPluginHandler(port)
-                        break
                     case 'send-request':
                         self.sendRequeseHandler(port)
                         break
                     default:
                         break
                 }
-            })
-        },
-
-        checkPluginHandler: function (port) {
-            var self = this
-            port.onMessage.addListener(function (data) {
-                chrome.tabs.sendRequest(port.sender.tab.id, {
-                    name: 'check-plugin-res'
-                })
             })
         },
 

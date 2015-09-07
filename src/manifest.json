@@ -1,0 +1,41 @@
+{
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ]
+  },
+  "browser_action": {
+    "default_icon": "images/icons/48x48.png",
+    "default_title": "XHR Proxy Tool"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "js/xhrproxy.page.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "128": "images/icons/128x128.png",
+    "16": "images/icons/16x16.png",
+    "19": "images/icons/19x19.png",
+    "32": "images/icons/32x32.png",
+    "48": "images/icons/48x48.png"
+  },
+  "description": "XHR Proxy Tool",
+  "manifest_version": 2,
+  "name": "XHR Proxy Tool",
+  "short_name": "XHR Proxy",
+  "permissions": [
+    "tabs",
+    "contextMenus",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "version": "1.0"
+}
