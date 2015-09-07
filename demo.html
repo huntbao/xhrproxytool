@@ -6,14 +6,17 @@
 </head>
 <body>
 <div class="xhr-proxy-toolbox">
-    <input name="xhrpt-send-url" value="http://qa7.server.163.org:3007/api/projects"/>
+    <input name="xhrpt-send-url" value="http://ip.taobao.com/service/getIpInfo.php"/>
     <select name="xhrpt-send-method">
         <option value="GET">GET</option>
         <option value="POST">POST</option>
+        <option value="DELETE">DELETE</option>
+        <option value="PUT">PUT</option>
     </select>
-    <textarea name="xhrpt-send-data">{email: "fan_jiajia@corp.netease.com"}</textarea>
+    <textarea name="xhrpt-send-data">{ip: "63.223.108.42"}</textarea>
     <button name="xhrpt-send-button" onclick="sendR()">Click Me</button>
 </div>
+<script src="jquery.js"></script>
 <script>
 
     var getValidJSON = function (value) {

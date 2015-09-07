@@ -32,6 +32,9 @@
                 var method = data.method.toLowerCase()
                 var url = data.url
                 var headers = data.headers || {}
+                if (!headers['Content-Type']) {
+                    headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+                }
                 if (method === 'get') {
                     for (var p in data.data) {
                         sendData += p + '=' + data.data[p]
@@ -40,7 +43,16 @@
                         url += '?' + sendData
                     }
                 } else {
-                    sendData = JSON.stringify(data.data)
+                    if (headers['Content-Type'] === 'application/json') {
+                        sendData = JSON.stringify(data.data)
+                    } else {
+                        for (var p in data.data) {
+                            if (sendData) {
+                                sendData += '&'
+                            }
+                            sendData += p + '=' + data.data[p]
+                        }
+                    }
                 }
                 xhr.open(method, url, true)
                 for (var h in headers) {
