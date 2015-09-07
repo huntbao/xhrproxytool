@@ -35,24 +35,16 @@
                 if (!headers['Content-Type']) {
                     headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
                 }
+                for (var p in data.data) {
+                    sendData && (sendData += '&')
+                    sendData += p + '=' + data.data[p]
+                }
                 if (method === 'get') {
-                    for (var p in data.data) {
-                        sendData += p + '=' + data.data[p]
-                    }
                     if (sendData) {
                         url += '?' + sendData
                     }
-                } else {
-                    if (headers['Content-Type'] === 'application/json') {
-                        sendData = JSON.stringify(data.data)
-                    } else {
-                        for (var p in data.data) {
-                            if (sendData) {
-                                sendData += '&'
-                            }
-                            sendData += p + '=' + data.data[p]
-                        }
-                    }
+                } else if (headers['Content-Type'] === 'application/json') {
+                    sendData = JSON.stringify(data.data)
                 }
                 xhr.open(method, url, true)
                 for (var h in headers) {
