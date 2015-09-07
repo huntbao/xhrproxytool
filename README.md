@@ -9,18 +9,18 @@ XHR proxy tool is a chrome extension, it can fetch data from cross domain.
 
 ** Check if extension is installed
 
-...javascript
+```javascript
 document.addEventListener('check-xhrpt-ext-res', function (e) {
     console.log('XHR proxy tool is installed!')
 }, false)
 document.addEventListener('DOMContentLoaded', function () {
     document.dispatchEvent(new CustomEvent('check-xhrpt-ext'))
 })
-...
+```
 
 ** Send request info to extension
 
-...javascript
+```javascript
 // add response listener
 document.addEventListener('sendto-xhrpt-ext-res', function (e) {
     console.log(e.detail)
@@ -36,4 +36,4 @@ var data = {
 }
 // send to extension
 document.dispatchEvent(new CustomEvent('sendto-xhrpt-ext', {detail: data}))
-...
+```
