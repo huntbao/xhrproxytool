@@ -35,7 +35,10 @@ var data = {
     method: 'GET',
     data: {
         ip: "63.223.108.42"
-    }
+    },
+     headers: {
+         'Content-Type': 'application/json'
+     }
 }
 // send to extension
 document.dispatchEvent(new CustomEvent('sendto-xhrpt-ext', {detail: data}))

@@ -31,16 +31,21 @@
                 var sendData = ''
                 var method = data.method.toLowerCase()
                 var url = data.url
+                var headers = data.headers || {}
                 if (method === 'get') {
                     for (var p in data.data) {
                         sendData += p + '=' + data.data[p]
                     }
-                    url += '?' + sendData
+                    if (sendData) {
+                        url += '?' + sendData
+                    }
                 } else {
                     sendData = JSON.stringify(data.data)
                 }
                 xhr.open(method, url, true)
-                xhr.setRequestHeader('Content-Type', 'application/json')
+                for (var h in headers) {
+                    xhr.setRequestHeader(h, headers[h])
+                }
                 xhr.onload = function () {
                     chrome.tabs.sendRequest(port.sender.tab.id, {
                         name: 'send-request-res',
