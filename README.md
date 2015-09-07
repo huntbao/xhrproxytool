@@ -5,6 +5,9 @@ XHR Proxy Tool
 
 XHR proxy tool is a chrome extension, it can fetch data from cross domain. 
 
+# Online Install #
+[Go chrome webstore](https://chrome.google.com/webstore/detail/xhr-proxy-tool/fbakmpanchidgmjopcmcddoihgjkfcjn)
+
 # Usage #
 
 ## Check if extension is installed
@@ -18,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 ```
 
-## Send request info to extension
+## Interact with extension
 
 ```javascript
 // add response listener
