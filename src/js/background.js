@@ -16,7 +16,7 @@
             chrome.extension.onConnect.addListener(function (port) {
                 switch (port.name) {
                     case 'send-request':
-                        self.sendRequeseHandler(port)
+                        self.sendRequestHandler(port)
                         break
                     default:
                         break
@@ -24,7 +24,7 @@
             })
         },
 
-        sendRequeseHandler: function (port) {
+        sendRequestHandler: function (port) {
             var self = this
             port.onMessage.addListener(function (data) {
                 var xhr = new XMLHttpRequest()
@@ -50,12 +50,22 @@
                 for (var h in headers) {
                     xhr.setRequestHeader(h, headers[h])
                 }
-                xhr.onload = function () {
-                    chrome.tabs.sendRequest(port.sender.tab.id, {
-                        name: 'send-request-res',
-                        data: xhr.responseText
-                    })
-                }
+                xhr.onreadystatechange = function () {
+                    if (this.readyState === 4) {
+                        if (this.status === 200) {
+                            chrome.tabs.sendRequest(port.sender.tab.id, {
+                                name: 'send-request-res',
+                                data: xhr.responseText,
+                                reqData: data
+                            })
+                        } else {
+                            chrome.tabs.sendRequest(port.sender.tab.id, {
+                                name: 'send-request-res',
+                                reqData: data
+                            })
+                        }
+                    }
+                };
                 xhr.send(sendData)
             })
         }

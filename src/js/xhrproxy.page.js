@@ -23,7 +23,13 @@
 
         addEvent: function () {
             document.addEventListener('check-xhrpt-ext', function (evt) {
-                document.dispatchEvent(new CustomEvent('check-xhrpt-ext-res'))
+                var event = new CustomEvent('check-xhrpt-ext-res', {
+                    detail: {
+                        resData: 'ok',
+                        reqData: evt.detail
+                    }
+                })
+                document.dispatchEvent(event)
             })
             document.addEventListener('sendto-xhrpt-ext', function (evt) {
                 chrome.extension.connect({
@@ -33,13 +39,12 @@
         },
 
         sendRequeseHandler: function (result) {
-            var data
-            try {
-                data = JSON.parse(result.data)
-            } catch (e) {
-                data = result.data
-            }
-            var event = new CustomEvent('sendto-xhrpt-ext-res', {detail: data})
+            var event = new CustomEvent('sendto-xhrpt-ext-res', {
+                detail: {
+                    resData: result.data,
+                    reqData: result.reqData
+                }
+            })
             document.dispatchEvent(event)
         }
     }
