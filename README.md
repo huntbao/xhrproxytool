@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
             sendId: sendId
         }
     })
-    document.dispatchEvent()
+    document.dispatchEvent(event)
 })
 ```
 
