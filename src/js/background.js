@@ -58,14 +58,30 @@
         }
         xhr.onreadystatechange = function () {
           if (this.readyState === 4) {
+            var xhrObj = {}
+            var keys = [
+              'readyState',
+              'response',
+              'responseText',
+              'responseType',
+              'responseURL',
+              'responseXML',
+              'status',
+              'statusText',
+              'timeout',
+              'withCredentials'
+            ]
+            keys.forEach(function (key) {
+              xhrObj[key] = xhr[key]
+            })
             chrome.tabs.sendRequest(port.sender.tab.id, {
               name: 'send-request-res',
               data: xhr.responseText,
               reqData: data,
-              xhr: xhr
+              xhr: xhrObj
             })
           }
-        };
+        }
         xhr.send(sendData)
       })
     }
