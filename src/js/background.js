@@ -61,7 +61,8 @@
             chrome.tabs.sendRequest(port.sender.tab.id, {
               name: 'send-request-res',
               data: xhr.responseText,
-              reqData: data
+              reqData: data,
+              xhr: xhr
             })
           }
         };
