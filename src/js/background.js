@@ -74,6 +74,8 @@
             keys.forEach(function (key) {
               xhrObj[key] = xhr[key]
             })
+            // 响应头
+            xhrObj.responseHeaders = this.getAllResponseHeaders();
             chrome.tabs.sendRequest(port.sender.tab.id, {
               name: 'send-request-res',
               data: xhr.responseText,
