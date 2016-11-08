@@ -55,3 +55,12 @@ var data = {
 // send to extension
 document.dispatchEvent(new CustomEvent('sendto-xhrpt-ext', {detail: data}))
 ```
+
+## 本地安装
+谷歌在线应用商城需要翻墙，可以按照下述步骤安装：
+
+* 下载本仓库代码，并解压
+* 打开谷歌浏览器，选择右上角的设置图标（纵向排列的三个点）-> 更多工具 -> 扩展程序，进到 chrome://extensions/ 页面
+* 勾选右上角的 “开发者模式”，选择“加载已解压的扩展程序”，会打开文件选择框，选择刚才下载并解压的目录下面的 `dist` 目录
+
+此时插件就安装好了，之前打开的页面需要刷新才能使用
