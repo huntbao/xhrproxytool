@@ -57,7 +57,7 @@ document.dispatchEvent(new CustomEvent('sendto-xhrpt-ext', {detail: data}))
 ```
 
 ## 本地安装
-谷歌在线应用商城需要翻墙，可以按照下述步骤安装：
+由于谷歌在线应用商城需要翻墙，可以按照下述步骤进行本地安装：
 
 * 下载本仓库代码，并解压
 * 打开谷歌浏览器，选择右上角的设置图标（纵向排列的三个点）-> 更多工具 -> 扩展程序，进到 chrome://extensions/ 页面
