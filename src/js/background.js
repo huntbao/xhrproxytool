@@ -30,7 +30,10 @@
         var xhr = new XMLHttpRequest()
         var sendData = ''
         var method = data.method.toLowerCase()
-        var url = data.url
+        var url = data.url.trim()
+        if (!/^https?\:/.test(url)) { // 请求url协议默认为http
+          url = 'http://' + url;
+        }
         var headers = data.headers || {}
         if (!headers['Content-Type']) {
           headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
