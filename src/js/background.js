@@ -29,7 +29,7 @@
       port.onMessage.addListener(function (data) {
         var xhr = new XMLHttpRequest()
         var sendData = ''
-        var method = data.method.toLowerCase()
+        var method = data.method.toUpperCase()
         var url = data.url.trim()
         if (!/^https?\:/.test(url)) { // 请求url协议默认为http
           url = 'http://' + url;
@@ -42,7 +42,7 @@
           sendData && (sendData += '&')
           sendData += p + '=' + data.data[p]
         }
-        if (method === 'get') {
+        if (method === 'GET') {
           if (sendData) {
             url += '?' + sendData
           }
