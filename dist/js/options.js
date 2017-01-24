@@ -1,0 +1,1 @@
+function init(){var e=document.querySelector("#check-label"),o=document.querySelectorAll("input")[0];e.addEventListener("click",function(e){localStorage.xhr_proxy_tool_js_error_notify=o.checked},!1),o.checked="true"===localStorage.xhr_proxy_tool_js_error_notify}document.addEventListener("DOMContentLoaded",function(){init()});
