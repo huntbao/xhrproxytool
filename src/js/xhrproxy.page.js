@@ -1,11 +1,11 @@
-﻿//XHR Proxy Tool
-//author @huntbao
+﻿//author @huntbao
 (function () {
+
+  /* global chrome */
 
   'use strict'
 
-  window.XHRPT = {
-
+  var page = {
     init: function () {
       var self = this
       chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
@@ -36,6 +36,33 @@
           name: 'send-request'
         }).postMessage(evt.detail)
       })
+      // 监听页面js错误
+      window.addEventListener('error', function (evt) {
+        chrome.extension.connect({
+          name: 'page-script-error'
+        }).postMessage({
+          evt: evt,
+          data: {
+            message: evt.message,
+            filename: evt.filename,
+            lineno: evt.lineno
+          },
+          from: window.location.href
+        })
+      })
+
+      // 执行脚本
+      document.addEventListener('exec-scripts', function (evt) {
+        chrome.extension.connect({
+          name: 'exec-scripts'
+        }).postMessage({
+          evt: evt,
+          data: {
+            targetFrameUrl: evt.detail.targetFrameUrl,
+            scripts: evt.detail.scripts
+          }
+        })
+      })
     },
 
     sendRequeseHandler: function (result) {
@@ -51,7 +78,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    window.XHRPT.init()
+    page.init()
   })
 
 })()

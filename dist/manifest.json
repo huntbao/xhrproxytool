@@ -11,12 +11,17 @@
   "content_scripts": [
     {
       "js": [
+        "js/lib/jquery-3.1.1.js",
+        "js/lib/jasmine/jasmine.js",
+        "js/lib/jasmine/jasmine-html.js",
+        "js/lib/jasmine/boot.js",
         "js/xhrproxy.page.js"
       ],
       "matches": [
         "http://*/*",
         "https://*/*"
       ],
+      "all_frames": true,
       "run_at": "document_start"
     }
   ],
@@ -29,13 +34,15 @@
   },
   "description": "XHR Proxy Tool",
   "manifest_version": 2,
+  "options_page": "options.html",
   "name": "XHR Proxy Tool",
   "short_name": "XHR Proxy",
   "permissions": [
-    "tabs",
-    "contextMenus",
+    "notifications",
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    "activeTab",
+    "webNavigation"
   ],
-  "version": "1.4.2"
+  "version": "1.4.3"
 }
