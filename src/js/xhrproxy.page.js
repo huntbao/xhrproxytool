@@ -8,7 +8,7 @@
   var page = {
     init: function () {
       var self = this
-      chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
+      chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (!sender || sender.id !== chrome.i18n.getMessage("@@extension_id")) return
         switch (request.name) {
           case 'send-request-res':
@@ -32,14 +32,14 @@
         document.dispatchEvent(event)
       })
       document.addEventListener('sendto-xhrpt-ext', function (evt) {
-        chrome.extension.connect({
+        chrome.runtime.connect({
           name: 'send-request'
         }).postMessage(evt.detail)
       })
       // 监听页面js错误
       window.addEventListener('error', function (evt) {
-        chrome.extension.connect({
-          name: 'page-script-error'
+        chrome.runtime.connect({
+          name: 'page-script-error',
         }).postMessage({
           evt: evt,
           data: {
@@ -53,7 +53,7 @@
 
       // 执行脚本
       document.addEventListener('exec-scripts', function (evt) {
-        chrome.extension.connect({
+        chrome.runtime.connect({
           name: 'exec-scripts'
         }).postMessage({
           evt: evt,
@@ -77,8 +77,13 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  var state = document.readyState
+  if (state === 'interactive' || state === 'complete') {
     page.init()
-  })
-
+  }
+  else {
+    document.addEventListener('DOMContentLoaded', function () {
+      page.init()
+    })
+  }
 })()

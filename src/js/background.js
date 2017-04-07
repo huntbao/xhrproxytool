@@ -12,7 +12,7 @@
 
     initConnect: function() {
       var self = this
-      chrome.extension.onConnect.addListener(function (port) {
+      chrome.runtime.onConnect.addListener(function (port) {
         switch (port.name) {
           case 'send-request':
             self.sendRequestHandler(port)
@@ -25,6 +25,13 @@
             break
           default:
             break
+        }
+      })
+      chrome.runtime.onMessageExternal.addListener(function (request, sender, sendResponse) {
+        if (request.name === 'inject-content-script') {
+          chrome.tabs.executeScript(sender.tab.id, {
+            file: 'js/xhrproxy.page.js'
+          })
         }
       })
     },
@@ -83,7 +90,7 @@
             })
             // 响应头
             xhrObj.responseHeaders = this.getAllResponseHeaders();
-            chrome.tabs.sendRequest(port.sender.tab.id, {
+            chrome.tabs.sendMessage(port.sender.tab.id, {
               name: 'send-request-res',
               data: xhr.responseText,
               reqData: data,

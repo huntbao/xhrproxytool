@@ -25,6 +25,9 @@
       "run_at": "document_start"
     }
   ],
+  "externally_connectable": {
+    "matches": ["https://nei.netease.com/*"]
+  },
   "icons": {
     "128": "images/icons/128x128.png",
     "16": "images/icons/16x16.png",
@@ -44,5 +47,5 @@
     "activeTab",
     "webNavigation"
   ],
-  "version": "1.4.3"
+  "version": "1.4.4"
 }
