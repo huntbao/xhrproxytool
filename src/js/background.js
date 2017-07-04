@@ -53,6 +53,27 @@
           sendData && (sendData += '&')
           sendData += p + '=' + data.data[p]
         }
+        var files = [];
+        Object.keys(data.data).forEach(function(key) {
+          var val = data.data[key];
+          if(val.__isFile__) {
+            files.push(new Promise(function(resolve, reject) {
+              var fileRequest = new XMLHttpRequest();
+              fileRequest.open('GET', val.blobUrl, true);
+              fileRequest.responseType = 'blob';
+              fileRequest.onload = function(e) {
+                if (this.status == 200) {
+                  var blob = this.response;
+                  data.data[key] = new File([blob], val.filename, {
+                    type: blob.type
+                  });
+                  resolve();
+                }
+              };
+              fileRequest.send();
+            }));
+          }
+        });
         if (method === 'GET') {
           if (sendData) {
             url += '?' + sendData
@@ -60,11 +81,20 @@
         } else if (headers['Content-Type'] === 'application/json') {
           sendData = JSON.stringify(data.data)
         } else if (headers['Content-Type'] === 'multipart/form-data') {
-          var fd = new FormData()
-          Object.keys(data.data).forEach(function (key) {
-            fd.append(key, data.data[key])
-          })
-          sendData = fd
+          var fd = new FormData();
+          if(files.length) {
+            Promise.all(files).then(function(){
+              Object.keys(data.data).forEach(function (key) {
+                  fd.append(key, data.data[key]);
+              });
+              xhr.send(fd);
+            });
+          } else {
+            Object.keys(data.data).forEach(function (key) {
+              fd.append(key, data.data[key]);
+            });
+            sendData = fd;
+          }
         }
         xhr.open(method, url, true)
         for (var h in headers) {
@@ -98,7 +128,9 @@
             })
           }
         }
-        xhr.send(sendData)
+        if(!files.length) {
+          xhr.send(sendData)
+        }
       })
     },
 
