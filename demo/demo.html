@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+<div class="xhr-proxy-toolbox">
+  <input name="xhrpt-send-url" value="http://ip.taobao.com/service/getIpInfo.php"/>
+  <select name="xhrpt-send-method">
+    <option value="GET">GET</option>
+    <option value="POST">POST</option>
+    <option value="DELETE">DELETE</option>
+    <option value="PUT">PUT</option>
+  </select>
+  <textarea name="xhrpt-send-data">{ip: "63.223.108.42"}</textarea>
+  <button name="xhrpt-send-button" onclick="sendR()">Click Me</button>
+</div>
+<script>
+
+  var getValidJSON = function (value) {
+    var json
+    try {
+      json = JSON.parse(value)
+    } catch (e) {
+      try {
+        json = eval('(' + value + ')')
+      } catch (er) {
+      }
+    }
+    return json
+  }
+  function sendR() {
+    var box = document.querySelector('.xhr-proxy-toolbox')
+    var urlInput = box.querySelector('[name="xhrpt-send-url"]')
+    var methodInput = box.querySelector('[name="xhrpt-send-method"]')
+    var dataInput = box.querySelector('[name="xhrpt-send-data"]')
+    if (urlInput) {
+      sendId = Date.now()
+      var data = {
+        url: urlInput.value,
+        method: methodInput ? methodInput.value : 'get',
+        data: dataInput ? getValidJSON(dataInput.value) : '',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        sendId: sendId
+      }
+      var event = new CustomEvent('sendto-xhrpt-ext', {detail: data})
+      document.dispatchEvent(event)
+    }
+  }
+  var sendId = Date.now()
+  document.addEventListener('sendto-xhrpt-ext-res', function (e) {
+    if (!e.detail || !e.detail.reqData || e.detail.reqData.sendId !== sendId) return;
+    console.log(e.detail)
+  }, false)
+
+  document.addEventListener('check-xhrpt-ext-res', function (e) {
+    if (!e.detail || !e.detail.reqData || e.detail.reqData.sendId !== sendId) return;
+    console.log('XHR proxy tool is installed!')
+  }, false)
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // check extension installed?
+    document.dispatchEvent(new CustomEvent('check-xhrpt-ext', {
+      detail: {
+        sendId: sendId
+      }
+    }))
+  })
+
+</script>
+</body>
+</html>

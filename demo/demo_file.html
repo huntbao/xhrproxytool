@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+<div class="xhr-proxy-toolbox">
+  <input type="file" id="file">
+  <button name="xhrpt-send-button" onclick="sendR()">Click Me</button>
+</div>
+<script>
+  function sendR() {
+    var file = document.querySelector('#file')
+    sendId = Date.now()
+    var objectURL = window.URL.createObjectURL(file.files[0]);
+
+    var data = {
+      file: objectURL,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      sendId: sendId
+    }
+    var event = new CustomEvent('sendto-xhrpt-ext', {detail: data})
+    document.dispatchEvent(event)
+  }
+  var sendId = Date.now()
+  document.addEventListener('sendto-xhrpt-ext-res', function (e) {
+    if (!e.detail || !e.detail.reqData || e.detail.reqData.sendId !== sendId) return;
+    console.log(e.detail)
+  }, false)
+
+  document.addEventListener('check-xhrpt-ext-res', function (e) {
+    if (!e.detail || !e.detail.reqData || e.detail.reqData.sendId !== sendId) return;
+    console.log('XHR proxy tool is installed!')
+  }, false)
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // check extension installed?
+    document.dispatchEvent(new CustomEvent('check-xhrpt-ext', {
+      detail: {
+        sendId: sendId
+      }
+    }))
+  })
+
+</script>
+</body>
+</html>
