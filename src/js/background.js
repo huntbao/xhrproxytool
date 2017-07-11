@@ -49,9 +49,13 @@
         if (!headers['Content-Type']) {
           headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
         }
-        for (var p in data.data) {
-          sendData && (sendData += '&')
-          sendData += p + '=' + data.data[p]
+        if(/^number|string|boolean$/.test(typeof data.data)) {
+          sendData = String(data.data);
+        } else {
+          for (var p in data.data) {
+            sendData && (sendData += '&')
+            sendData += p + '=' + data.data[p]
+          }
         }
         var files = [];
         Object.keys(data.data).forEach(function(key) {
