@@ -95,6 +95,7 @@
             });
             sendData = fd;
           }
+          delete headers['Content-Type'];
         }
         xhr.open(method, url, true)
         for (var h in headers) {
