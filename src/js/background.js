@@ -49,7 +49,7 @@
         if (!headers['Content-Type']) {
           headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
         }
-        if(/^number|string|boolean$/.test(typeof data.data)) {
+        if(/^(number|string|boolean)$/.test(typeof data.data)) {
           sendData = String(data.data);
         } else {
           for (var p in data.data) {
