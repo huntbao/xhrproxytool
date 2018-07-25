@@ -8,6 +8,7 @@
   var background  = {
     init: function() {
       this.initConnect()
+      this.initWebRequest()
     },
 
     initConnect: function() {
@@ -34,6 +35,43 @@
           })
         }
       })
+    },
+
+    initWebRequest: function() {
+      chrome.webRequest.onBeforeSendHeaders.addListener(
+        function(details) {
+          var extension_id = chrome.i18n.getMessage('@@extension_id')
+          var filterSingleItem = function(arr, field, value) {
+            return arr && arr.length > 0 ? arr.filter(function(item) {
+              return item[field] === value
+            })[0] : null
+          }
+          var origin = filterSingleItem(details.requestHeaders, 'name', 'Origin')
+          // 判断是否是extension发出，initiator 在chrome 63版本中增加
+          if ((details.initiator && details.initiator.substring(19) === extension_id)
+            || (origin && origin.value && origin.value.substring(19) === extension_id)) {
+              var setHeaders = JSON.parse(filterSingleItem(details.requestHeaders, 'name', 'X-Set-Headers').value)
+              for (var h in setHeaders) {
+                var item = filterSingleItem(details.requestHeaders, 'name', h)
+                if (item) {
+                  if (h === 'Cookie') {
+                    item.value += ';' + setHeaders[h]
+                  } else {
+                    item.value = setHeaders[h]
+                  }
+                } else {
+                  details.requestHeaders.push({ name: h, value: setHeaders[h] })
+                }
+              }
+              details.requestHeaders.splice(details.requestHeaders.findIndex(function(item){
+                return item.name === 'X-Set-Headers'
+              }), 1)
+              return {requestHeaders: details.requestHeaders}
+          }
+        },
+        {urls: ["<all_urls>"]},
+        ["blocking", "requestHeaders"]
+      )
     },
 
     sendRequestHandler: function(port) {
@@ -102,9 +140,16 @@
           delete headers['Content-Type'];
         }
         xhr.open(method, url, true)
+        var setHeaders = {}
+        var limitHeaders = ['Referer', 'Accepet-Charset', 'Accept-Encoding', 'Cookie', 'Date', 'Origin', 'User-Agent']
         for (var h in headers) {
-          xhr.setRequestHeader(h, headers[h])
+          if (limitHeaders.indexOf(h) !== -1) {
+            setHeaders[h] = headers[h]
+          } else {
+            xhr.setRequestHeader(h, headers[h])
+          }
         }
+        xhr.setRequestHeader('X-Set-Headers', JSON.stringify(setHeaders))
         xhr.onreadystatechange = function () {
           if (this.readyState === 4) {
             var xhrObj = {}
@@ -125,6 +170,13 @@
             })
             // 响应头
             xhrObj.responseHeaders = this.getAllResponseHeaders();
+            // 消除Chrome 60版本前后的大小写差异
+            xhrObj.responseHeaders = xhrObj.responseHeaders.split(/\n/).map(function(item) {
+              var index = item.indexOf(':')
+              return index > 0 ? item.substring(0, index).split('-').map(function(word) {
+                return word[0].toUpperCase() + word.substring(1)
+              }).join('-') + ':' + item.substring(index + 1) : ''
+            }).join('\n')
             chrome.tabs.sendMessage(port.sender.tab.id, {
               name: 'send-request-res',
               data: xhr.responseText,

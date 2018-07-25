@@ -41,6 +41,8 @@
   "name": "XHR Proxy Tool",
   "short_name": "XHR Proxy",
   "permissions": [
+    "webRequest",
+    "webRequestBlocking",
     "notifications",
     "http://*/*",
     "https://*/*",
