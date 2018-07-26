@@ -104,7 +104,7 @@
               fileRequest.open('GET', val.blobUrl, true);
               fileRequest.responseType = 'blob';
               fileRequest.onload = function(e) {
-                if (this.status == 200) {
+                if (this.status === 200) {
                   var blob = this.response;
                   data.data[key] = new File([blob], val.filename, {
                     type: blob.type
@@ -141,7 +141,7 @@
         }
         xhr.open(method, url, true)
         var setHeaders = {}
-        var limitHeaders = ['Referer', 'Accepet-Charset', 'Accept-Encoding', 'Cookie', 'Date', 'Origin', 'User-Agent']
+        var limitHeaders = ['Referer', 'Accept-Charset', 'Accept-Encoding', 'Cookie', 'Date', 'Origin', 'User-Agent']
         for (var h in headers) {
           if (limitHeaders.indexOf(h) !== -1) {
             setHeaders[h] = headers[h]
