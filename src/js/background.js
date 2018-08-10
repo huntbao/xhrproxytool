@@ -170,13 +170,6 @@
             })
             // 响应头
             xhrObj.responseHeaders = this.getAllResponseHeaders();
-            // 消除Chrome 60版本前后的大小写差异
-            xhrObj.responseHeaders = xhrObj.responseHeaders.split(/\n/).map(function(item) {
-              var index = item.indexOf(':')
-              return index > 0 ? item.substring(0, index).split('-').map(function(word) {
-                return word[0].toUpperCase() + word.substring(1)
-              }).join('-') + ':' + item.substring(index + 1) : ''
-            }).join('\n')
             chrome.tabs.sendMessage(port.sender.tab.id, {
               name: 'send-request-res',
               data: xhr.responseText,
