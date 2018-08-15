@@ -87,14 +87,6 @@
         if (!headers['Content-Type']) {
           headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
         }
-        if(/^(number|string|boolean)$/.test(typeof data.data)) {
-          sendData = String(data.data);
-        } else {
-          for (var p in data.data) {
-            sendData && (sendData += '&')
-            sendData += p + '=' + data.data[p]
-          }
-        }
         var files = [];
         Object.keys(data.data).forEach(function(key) {
           var val = data.data[key];
@@ -116,30 +108,58 @@
             }));
           }
         });
+        var isObjectOrArray = function(o) {
+          var toString = Object.prototype.toString;
+          var field = ['Object', 'Array'];
+          return field.map(function(item){
+            return '[object ' + item + ']';
+          }).indexOf(toString.call(o)) !== -1;
+        }
+        if(/^(number|string|boolean)$/.test(typeof data.data)) {
+          sendData = encodeURIComponent(String(data.data));
+        } else {
+          for (var p in data.data) {
+            // 有文件直接忽略不发
+            if (!data.data[p].__isFile__) {
+              sendData && (sendData += '&')
+              // 其他做序列化
+              sendData += encodeURIComponent(p) + '=' + encodeURIComponent(isObjectOrArray(data.data[p]) ? JSON.stringify(data.data[p]) : data.data[p])
+            }
+          }
+        }
+        var fd = new FormData();
+        var setFormData = function(fd, data, withURIEncode) {
+          var transform = withURIEncode ? encodeURIComponent : function(item) { return item };
+          Object.keys(data).forEach(function(key) {
+            var k = transform(key),
+                v = isObjectOrArray(data[key]) ? transform(JSON.stringify(data[key])) : transform(data[key]);
+                fd.append(k, v);
+          });
+        } 
         if (method === 'GET') {
           if (sendData) {
             url += '?' + sendData
           }
+          if (files.length) {
+            // 清空，否则GET请求发不出去
+            files.length = 0;
+          }
+        } else if (files.length) {
+          Promise.all(files).then(function(){
+            setFormData(fd, data.data);
+            xhr.send(fd);
+          });
+          delete headers['Content-Type'];
         } else if (headers['Content-Type'] === 'application/json') {
           sendData = JSON.stringify(data.data)
         } else if (headers['Content-Type'] === 'multipart/form-data') {
-          var fd = new FormData();
-          if(files.length) {
-            Promise.all(files).then(function(){
-              Object.keys(data.data).forEach(function (key) {
-                  fd.append(key, data.data[key]);
-              });
-              xhr.send(fd);
-            });
-          } else {
-            Object.keys(data.data).forEach(function (key) {
-              fd.append(key, data.data[key]);
-            });
-            sendData = fd;
-          }
-          delete headers['Content-Type'];
+          setFormData(fd, data.data);
+          sendData = fd;
+        } else if (!~headers['Content-Type'].indexOf('application/x-www-form-urlencoded')) {
+          // 对于其他类型，先发plain text
+          sendData = JSON.stringify(data.data)
         }
-        xhr.open(method, url, true)
+        xhr.open(method, url, true);
         var setHeaders = {}
         var limitHeaders = ['Referer', 'Accept-Charset', 'Accept-Encoding', 'Cookie', 'Date', 'Origin', 'User-Agent']
         for (var h in headers) {
