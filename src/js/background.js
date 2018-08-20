@@ -83,9 +83,12 @@
         if (!/^https?\:/.test(url)) { // 请求url协议默认为http
           url = 'http://' + url;
         }
-        var headers = data.headers || {}
-        if (!headers['Content-Type']) {
-          headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+        var headers = {}
+        Object.keys(data.headers || {}).forEach(function(key) {
+          headers[key.toLowerCase()] = data.headers[key];
+        })
+        if (!headers['content-type']) {
+          headers['content-type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
         }
         var files = [];
         Object.keys(data.data).forEach(function(key) {
@@ -149,19 +152,19 @@
             setFormData(fd, data.data);
             xhr.send(fd);
           });
-          delete headers['Content-Type'];
-        } else if (headers['Content-Type'] === 'application/json') {
+          delete headers['content-type'];
+        } else if (headers['content-type'] === 'application/json') {
           sendData = JSON.stringify(data.data)
-        } else if (headers['Content-Type'] === 'multipart/form-data') {
+        } else if (headers['content-type'] === 'multipart/form-data') {
           setFormData(fd, data.data);
           sendData = fd;
-        } else if (!~headers['Content-Type'].indexOf('application/x-www-form-urlencoded')) {
+        } else if (!~headers['content-type'].indexOf('application/x-www-form-urlencoded')) {
           // 对于其他类型，先发plain text
           sendData = JSON.stringify(data.data)
         }
         xhr.open(method, url, true);
         var setHeaders = {}
-        var limitHeaders = ['Referer', 'Accept-Charset', 'Accept-Encoding', 'Cookie', 'Date', 'Origin', 'User-Agent']
+        var limitHeaders = ['referer', 'accept-charset', 'accept-encoding', 'cookie', 'date', 'origin', 'user-agent']
         for (var h in headers) {
           if (limitHeaders.indexOf(h) !== -1) {
             setHeaders[h] = headers[h]
