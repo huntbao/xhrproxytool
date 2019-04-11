@@ -7,6 +7,7 @@
 
   var background  = {
     init: function() {
+      this.globalVarsNum = 0
       this.initConnect()
       this.initWebRequest()
     },
@@ -23,6 +24,9 @@
             break
           case 'exec-scripts':
             self.execScriptsHandler(port)
+            break
+          case 'show-global-vars':
+            self.showGlobalVars(port)
             break
           default:
             break
@@ -243,6 +247,21 @@
             console.log('没有找到目标 iframe 地址: ' + data.targetFrameUrl)
           }
         })
+      })
+    },
+
+    showGlobalVars: function(port) {
+      var self = this
+      port.onMessage.addListener(function (data) {
+        if (data.reset) {
+          self.globalVarsNum = 0
+        } else {
+          self.globalVarsNum += parseInt(data.data.varNum)
+        }
+        if (self.globalVarsNum) {
+          chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+          chrome.browserAction.setBadgeText({text: String(self.globalVarsNum)});
+        }
       })
     }
   }

@@ -19,6 +19,7 @@
         }
       })
       self.addEvent()
+      self.detectGlobalVars()
     },
 
     addEvent: function () {
@@ -65,7 +66,7 @@
       })
     },
 
-    sendRequeseHandler: function (result) {
+    sendRequestHandler: function (result) {
       var event = new CustomEvent('sendto-xhrpt-ext-res', {
         detail: {
           xhr: result.xhr,
@@ -74,6 +75,44 @@
         }
       })
       document.dispatchEvent(event)
+    },
+
+    detectGlobalVars: function () {
+      var script = document.createElement('script')
+      script.innerHTML = '' +
+        "(function(){" +
+        "  var iframe = document.createElement('iframe');" +
+        "  document.body.appendChild(iframe);" +
+        "  var win = iframe.contentWindow.window;" +
+        "  var vars = Object.keys(window).filter(function (key) {" +
+        "    return !win.hasOwnProperty(key)" +
+        "  });" +
+        "  console.log('页面 ' + window.location.href + ' 共有 ' + vars.length +  ' 个全局变量: ', vars);" +
+        "  var div = document.createElement('div');" +
+        "  div.id = 'xhrproxy-show-global-var-div';" +
+        "  div.innerHTML = vars.length;" +
+        "  document.body.appendChild(div);" +
+        "  document.body.removeChild(iframe);" +
+        "})();"
+      document.head.appendChild(script)
+      var gDiv = document.getElementById('xhrproxy-show-global-var-div')
+      chrome.runtime.connect({
+        name: 'show-global-vars',
+      }).postMessage({
+        data: {
+          varNum: gDiv.innerHTML
+        },
+        from: window.location.href
+      })
+      document.body.removeChild(gDiv)
+      // 刷新页面时重置
+      window.onbeforeunload = function () {
+        chrome.runtime.connect({
+          name: 'show-global-vars',
+        }).postMessage({
+          reset: true
+        })
+      }
     }
   }
 
