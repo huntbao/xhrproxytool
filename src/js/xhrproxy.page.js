@@ -83,10 +83,12 @@
         "(function(){" +
         "  var iframe = document.createElement('iframe');" +
         "  document.body.appendChild(iframe);" +
-        "  var win = iframe.contentWindow.window;" +
-        "  var vars = Object.keys(window).filter(function (key) {" +
-        "    return !win.hasOwnProperty(key)" +
-        "  });" +
+        "  try{" +
+        "   var win = iframe.contentWindow.window;" +
+        "   var vars = Object.keys(window).filter(function (key) {" +
+        "     return !win.hasOwnProperty(key)" +
+        "   });" +
+        "   }catch(e){return;}" +
         "  console.log('页面 ' + window.location.href + ' 共有 ' + vars.length +  ' 个全局变量: ', vars);" +
         "  var div = document.createElement('div');" +
         "  div.id = 'xhrproxy-show-global-var-div';" +
@@ -96,6 +98,9 @@
         "})();"
       document.head.appendChild(script)
       var gDiv = document.getElementById('xhrproxy-show-global-var-div')
+      if (!gDiv) {
+        return;
+      }
       chrome.runtime.connect({
         name: 'show-global-vars',
       }).postMessage({
