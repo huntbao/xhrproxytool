@@ -12,7 +12,7 @@
         if (!sender || sender.id !== chrome.i18n.getMessage("@@extension_id")) return
         switch (request.name) {
           case 'send-request-res':
-            self.sendRequeseHandler(request)
+            self.sendRequestHandler(request)
             break
           default:
             break
