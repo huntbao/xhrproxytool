@@ -58,7 +58,7 @@
               for (var h in setHeaders) {
                 var item = filterSingleItem(details.requestHeaders, 'name', h)
                 if (item) {
-                  if (h === 'Cookie') {
+                  if (h === 'cookie') {
                     item.value += ';' + setHeaders[h]
                   } else {
                     item.value = setHeaders[h]
@@ -73,8 +73,8 @@
               return {requestHeaders: details.requestHeaders}
           }
         },
-        {urls: ["<all_urls>"]},
-        ["blocking", "requestHeaders"]
+        {urls: ['<all_urls>']},
+        ['blocking', 'requestHeaders', 'extraHeaders']
       )
     },
 
@@ -170,7 +170,7 @@
         var setHeaders = {}
         var limitHeaders = ['referer', 'accept-charset', 'accept-encoding', 'cookie', 'date', 'origin', 'user-agent']
         for (var h in headers) {
-          if (limitHeaders.indexOf(h) !== -1) {
+          if (limitHeaders.indexOf(h.toLowerCase()) !== -1) {
             setHeaders[h] = headers[h]
           } else {
             xhr.setRequestHeader(h, headers[h])
@@ -247,21 +247,6 @@
             console.log('没有找到目标 iframe 地址: ' + data.targetFrameUrl)
           }
         })
-      })
-    },
-
-    showGlobalVars: function(port) {
-      var self = this
-      port.onMessage.addListener(function (data) {
-        if (data.reset) {
-          self.globalVarsNum = 0
-        } else {
-          self.globalVarsNum += parseInt(data.data.varNum)
-        }
-        if (self.globalVarsNum) {
-          chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
-          chrome.browserAction.setBadgeText({text: String(self.globalVarsNum)});
-        }
       })
     }
   }
